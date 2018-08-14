@@ -3,6 +3,32 @@
 Analysis of Minnesota 2018 midterm primary results.
 
 
+## URL parameters to query specific results
+
+Gubernatorial results
+?scope=all&zoom=mn&party=dfl&race=gov
+?scope=all&zoom=mn&party=gop&race=gov
+
+Senate results
+?scope=all&zoom=mn&party=dfl&race=sen
+?scope=all&zoom=mn&party=gop&race=sen
+
+Attorney General results
+?scope=all&zoom=mn&party=dfl&race=ag
+?scope=all&zoom=mn&party=gop&race=ag
+
+Congressional District 1 results
+?scope=CD1&zoom=mn&party=dfl&race=1
+?scope=CD1&zoom=mn&party=gop&race=1
+
+Congressional District 5 results
+?scope=CD5&zoom=metro&party=dfl&race=5
+?scope=CD5&zoom=metro&party=gop&race=5
+
+Congressional District 8 results
+?scope=CD8&zoom=mn&party=dfl&race=8
+?scope=CD8&zoom=mn&party=gop&race=8
+
 
 ## Publishing
 
