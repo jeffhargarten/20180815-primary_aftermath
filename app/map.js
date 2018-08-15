@@ -7,13 +7,10 @@ import us from '../sources/mnpct-small.json';
 import mn from '../sources/mncd.json';
 import mncounties from '../sources/counties.json';
 
-import gov from '../sources/gov.json';
 import ag from '../sources/ag.json';
-import sen from '../sources/sen.json';
-import cd1 from '../sources/cd1.json';
-import cd5 from '../sources/cd5.json';
-import cd8 from '../sources/cd8.json';
-
+import gov from '../sources/gov.json'; 
+import cd5 from '../sources/mncd5.json';
+import cd8 from '../sources/mncd8.json';
 
 class Map {
 
@@ -24,9 +21,11 @@ class Map {
         this.zoomed = false;
         this.scaled = $(target).width() / 520;
         this.colorScale = d3.scaleOrdinal()
-            .domain(['d1', 'd2', 'd3', 'd4', 'r1', 'r2', 'r3', 'r4'])
-            .range(['#82BAE0', '#B9EE7D', '#CE91E9', '#9084C3', '#EB6868', '#F9F37C', '#FBA363', '#C95B99']);
-
+            .domain(['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'r1', 'r2', 'r3'])
+            .range(['#b9ee7d', '#82bae0', '#ce91e9', '#65c0b0', '#9084c3', '#888888', '#eb6868', '#f9f37c', '#fba363']);
+        this.colorScale2 = d3.scaleOrdinal()
+            .domain(['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'r1', 'r2', 'r3'])
+            .range(['#43710f', '#3b6e91', '#50156a', '#255a51', '#322a56', '#333333', '#a31616', '#7a7406', '#ae4c04']);
     }
 
     /********** PRIVATE METHODS **********/
@@ -123,6 +122,8 @@ class Map {
         var candidate2 = "";
         var candidate3 = "";
         var candidate4 = "";
+        var candidate5 = "";
+        var candidate6 = "";
 
         if (party == "GOP") {
             candidate1 = "<div class='resultRow topRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("r1") + ";'></span>&nbsp;" + data[0].r1_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].r1) + "%</div></div>";
@@ -130,10 +131,10 @@ class Map {
                 candidate2 = "<div class='resultRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("r2") + ";'></span>&nbsp;" + data[0].r2_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].r2) + "%</div></div>";
             }
             if (data[0].r3_name != null) {
-                candidate3 = "<div class='resultRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("r3") + ";'></span>&nbsp;" + data[0].r3_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].r3) + "%</div></div>";
+               if (data[0].r3_name != null) { candidate3 = "<div class='resultRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("r3") + ";'></span>&nbsp;" + data[0].r3_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].r3) + "%</div></div>"; }
             }
             if (data[0].r4_name != null) {
-                candidate4 = "<div class='resultRow'><div class='name'><span class='legendary' style='background-color:" + self.colorScale("r4") + ";'></span>&nbsp;" + data[0].r4_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].r4) + "%</div></div>";
+               if (data[0].r4_name != null) { candidate4 = "<div class='resultRow'><div class='name'><span class='legendary' style='background-color:" + self.colorScale("r4") + ";'></span>&nbsp;" + data[0].r4_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].r4) + "%</div></div>"; }
             }
         } else if (party == "DFL") {
             candidate1 = "<div class='resultRow topRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("d1") + ";'></span>&nbsp;" + data[0].d1_name + "</div><div class='percent'>" + data[0].d1 + "%</div></div>";
@@ -146,10 +147,16 @@ class Map {
             if (data[0].d4_name != null) {
                 candidate4 = "<div class='resultRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("d4") + ";'></span>&nbsp;" + data[0].d4_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].d4) + "%</div></div>";
             }
+            if (data[0].d5_name != null) {
+                candidate5 = "<div class='resultRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("d5") + ";'></span>&nbsp;" + data[0].d5_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].d5) + "%</div></div>";
+            }
+            if (data[0].d6_name != null) {
+                if (data[0].d6_name != null) { candidate6 = "<div class='resultRow'><div class='name'><span class='key_legend' style='background-color:" + self.colorScale("d6") + ";'></span>&nbsp;" + data[0].d6_name + "</div><div class='percent'>" + d3.format(".1f")(data[0].d6) + "%</div></div>"; }
+            }
         }
 
 
-        $(self.target + ' .key').html(candidate1 + candidate2 + candidate3 + candidate4);
+        $(self.target + ' .key').html(candidate1 + candidate2 + candidate3 + candidate4 + candidate5 + candidate6);
 
         if (self._detect_mobile() != true) {
             d3.helper = {};
@@ -194,17 +201,18 @@ class Map {
                 .call(d3.helper.tooltip(function(d, i) {
                     var candidates = [];
                     for (var i = 0; i < data.length; i++) {
-                        if (data[i].VTDID == Number('27' + d.properties.COUNTYCODE + '5' + d.properties.PCTCODE)) {
+                        if (data[i].match == (d.properties.COUNTYCODE + d.properties.CONGDIST + d.properties.MNLEGDIST + d.properties.PCTCODE)) {
                             if (party == 'DFL') {
-                                candidates.push([data[i].d1_name, data[i].d1, self.colorScale(data[i].dWin)]);
-                                candidates.push([data[i].d2_name, data[i].d2, self.colorScale(data[i].dWin)]);
-                                candidates.push([data[i].d3_name, data[i].d3, self.colorScale(data[i].dWin)]);
-                                candidates.push([data[i].d4_name, data[i].d4, self.colorScale(data[i].dWin)]);
+                                candidates.push([data[i].d1_name, data[i].d1, self.colorScale('d1')]);
+                                candidates.push([data[i].d2_name, data[i].d2, self.colorScale('d2')]);
+                                candidates.push([data[i].d3_name, data[i].d3, self.colorScale('d3')]);
+                                candidates.push([data[i].d4_name, data[i].d4, self.colorScale('d4')]);
+                                candidates.push([data[i].d5_name, data[i].d5, self.colorScale('d5')]);
+                                if (data[i].d6_name != null) { candidates.push([data[i].d6_name, data[i].d6, self.colorScale('d6')]); }
                             } else if (party == 'GOP') {
-                                candidates.push([data[i].r1_name, data[i].r1, self.colorScale(data[i].rWin)]);
-                                candidates.push([data[i].r2_name, data[i].r2, self.colorScale(data[i].rWin)]);
-                                candidates.push([data[i].r3_name, data[i].r3, self.colorScale(data[i].rWin)]);
-                                candidates.push([data[i].r4_name, data[i].r4, self.colorScale(data[i].rWin)]);
+                                candidates.push([data[i].r1_name, data[i].r1, self.colorScale('r1')]);
+                                candidates.push([data[i].r2_name, data[i].r2, self.colorScale('r2')]);
+                                if (data[i].r3_name != null) { candidates.push([data[i].r3_name, data[i].r3, self.colorScale('r3')]); }
                             }
 
                             function sortCandidates(a, b) {
@@ -217,7 +225,13 @@ class Map {
 
                             candidates.sort(sortCandidates);
 
-                            return d.properties.PCTNAME + "<div>" + candidates[0][0] + " with <span class='legendary' style='background-color:" + candidates[0][2] + "'>" + d3.format(".1f")(candidates[0][1]) + "%</span></div>";
+                            var tipString = "";
+
+                            for (var j=0; j < candidates.length; j++){
+                                tipString = tipString + "<div>" + candidates[j][0] + " with <span class='legendary' style='background-color:" + candidates[j][2] + "'>" + d3.format(".1f")(candidates[j][1]) + "%</span></div>"
+                            }
+
+                            return d.properties.PCTNAME + " " + tipString;
                         }
                     }
                     return d.properties.PCTNAME + "<div>No results</div>";
@@ -226,19 +240,24 @@ class Map {
                 .duration(600)
                 .style('fill', function(d) {
                     var winner = '';
+                    var winner_sat = '';
                     var margin = '';
 
                     for (var i = 0; i < data.length; i++) {
-                        if (data[i].VTDID == Number('27' + d.properties.COUNTYCODE + '5' + d.properties.PCTCODE)) {
+                        if (data[i].match == (d.properties.COUNTYCODE + d.properties.CONGDIST + d.properties.MNLEGDIST + d.properties.PCTCODE)) {
+                            console.log("match");
                             if (party == 'DFL') {
+                                winner_sat = self.colorScale2(data[i].dWin);
                                 winner = self.colorScale(data[i].dWin);
                                 margin = data[i].dMargin;
                             } else if (party == 'GOP') {
+                                winner_sat = self.colorScale2(data[i].rWin);
                                 winner = self.colorScale(data[i].rWin);
                                 margin = data[i].rMargin;
                             }
-                            var colorIntensity = d3.scaleLinear().domain([30, 100]).range(['#ffffff', winner]);
-                            return colorIntensity(margin);
+                            var colorIntensity = d3.scaleLinear().domain([1, 100]).range([winner, winner_sat]);
+                            if (margin != 0) { return colorIntensity(margin); }
+                            else { return '#dddddd'; }
                         }
                     }
                     return '#dddddd';
@@ -377,7 +396,7 @@ class Map {
                 })
                 .on('click', function(d) {
                     if (race != "5") {
-                        clicked(d, 9);
+                        clicked(d, 8);
                     }
                 });
 
@@ -403,7 +422,7 @@ class Map {
                         $("#P" + d.properties.DISTRICT).addClass("hidden");
                     } else {
                         if (race != "5") {
-                            clicked(d, 9);
+                            clicked(d, 8);
                         }
                     }
                 });
