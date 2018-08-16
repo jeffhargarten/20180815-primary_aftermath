@@ -7,8 +7,8 @@
 // Utility functions, such as Pym integration, number formatting,
 // and device checking
 import utilsFn from './utils.js';
-import * as c3 from 'c3';
 import Map from './map.js';
+import * as d3 from 'd3';
 
 const map = new Map("#mapper");
 
@@ -31,26 +31,28 @@ var race = String($.urlParam('race'));
 var party = String($.urlParam('party')).toUpperCase();
 var raceFull = "Congressional District " + race;
 
-$("#dflGOVmn_map").load('./img/dfl-gov-mn.html');
-$("#dflGOVmetro_map").load('./img/dfl-gov-metro.html');
+if (selected == "all") {
+$("#dflGOVmn_map").load('./img/dflGOVmn.html');
+$("#dflGOVmetro_map").load('./img/dflGOVmetro.html');
 
-$("#gopGOVmn_map").load('./img/gop-gov-mn.html');
-$("#gopGOVmetro_map").load('./img/gop-gov-metro.html');
+$("#gopGOVmn_map").load('./img/gopGOVmn.html');
+$("#gopGOVmetro_map").load('./img/gopGOVmetro.html');
 
-$("#dflAGmn_map").load('./img/dfl-ag-mn.html');
-$("#dflAGmetro_map").load('./img/dfl-ag-metro.html');
+$("#dflAGmn_map").load('./img/dflAGmn.html');
+$("#dflAGmetro_map").load('./img/dflAGmetro.html');
 
-$("#dflCD5metro_map").load('./img/dfl-cd5-metro.html');
+$("#dflCD5metro_map").load('./img/dflCD5metro.html');
 
-$("#dflCD8mn_map").load('./img/dfl-cd8-mn.html');
-$("#dflCD8metro_map").load('./img/dfl-cd8-metro.html');
-
-if (selected != null) {
+$("#dflCD8mn_map").load('./img/dflCD8mn.html');
+$("#dflCD8metro_map").load('./img/dflCD8metro.html');
+}
+else if (selected != null) {
     $(".slide").hide();
     $("#" + selected).show();
+    $("." + selected).load('./img/' + selected + '.html');
 }
-if (selected == null) {
-    $(".slide").show();
+else if (selected == null) {
+    $("#mainmap").show();
 
 if (race == "gov") {
     raceFull = "Gubernatorial";
@@ -59,11 +61,22 @@ if (race == "gov") {
 } else if (race == "ag") {
     raceFull = "Attorney General";
 }
+var data;
+function loadData(data){
+    map.render(scope, zoom, party, "all", race, data);
+}
 
-map.render(scope, zoom, party, "all", race);
+$.ajax({
+  url: './data/' + race + '.json',
+  async: false,
+  dataType: 'json',
+  success: function (response) {
+    data = response.results; 
+    loadData(data);
+  }
+});
+
 
 $("#districtSelect").html('<div id="focus" class="' + String(party).toLowerCase() + '">&nbsp;' + party + ' ' + raceFull + ' Primary</div>');
 
 }
-
-

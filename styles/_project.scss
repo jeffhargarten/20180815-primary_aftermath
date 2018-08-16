@@ -13,9 +13,24 @@ ul {
   .desktop {
     display:block;
   }
-
+a {
+  text-decoration:none;
+}
 .body {
  	max-width:100%;
+ }
+
+ #menu {
+ width:100%;
+ }
+
+ .col { 
+  width:50%;
+  display:inline-block;
+ }
+
+ .slide {
+ display:none;
  }
 
  #wrapper {
@@ -27,6 +42,11 @@ ul {
 
  .fallback {
   pointer-events:none;
+ }
+
+ .generate:hover {
+   opacity:0.5;
+   cursor:pointer;
  }
 
 .slide {
@@ -51,6 +71,19 @@ a:hover {
 .sort-link:hover {
   cursor:pointer;
   opacity:0.5;
+}
+
+.tipRow {
+  clear:both;
+}
+
+.canName {
+  float:left;
+  margin-right:5px;
+}
+
+.votepct {
+  float:right;
 }
 
 .map {
@@ -150,6 +183,10 @@ section.body p {
   stroke-width: 0.03px !important;
 }
 
+#mapper svg .precinct {
+  stroke-width: 0.1px !important;
+}
+
 .precinct:hover {
   opacity:0.5;
   cursor:pointer;
@@ -191,17 +228,26 @@ section.body p {
 }
 
 
+.fallback .hidden {
+  opacity:1 !important;
+}
+
 #dflGOVmn_metro .county {
   opacity:1 !important;
 }
 
-#dflGOVmn_map .district, #gopGOVmn_map .district {
+#dflGOVmetro_map .district, #gopGOVmetro_map .district {
+  opacity:0 !important;
+  display:none !important;
+}
+
+#dflGOVmn_map .district, #gopGOVmn_map .district, #dflAGmn_map .district, #dflAGmetro_map .district {
   stroke-width: 1px !important;
   stroke-opacity:1 !important;
 }
 
-.fallback .hidden {
-  opacity:1 !important;
+#dflAGmetro_map .district {
+  opacity:0 !important;
 }
 
 #dflCD8metro_map .district {
@@ -238,7 +284,7 @@ section.body p {
 
 .legendary {
     padding:4px;
-    color: #fff;
+    color: #000000;
     font-weight:bold;
     border-radius: 5px;
     padding: 0 7px;
@@ -550,7 +596,6 @@ section.body p {
   }
   .slide, .map {
     width:100% !important;
-    display:block;
   }
   .fallback { 
     width: 100%;
