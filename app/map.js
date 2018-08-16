@@ -371,7 +371,7 @@ class Map {
                 })
                 .on('click', function(d) {
                     if (race != "5") {
-                        clicked(d, 8);
+                        clicked(d, 12);
                     }
                 });
 
@@ -397,7 +397,7 @@ class Map {
                         $("#P" + d.properties.DISTRICT).addClass("hidden");
                     } else {
                         if (race != "5") {
-                            clicked(d, 8);
+                            clicked(d, 12);
                         }
                     }
                 });
